@@ -5,22 +5,126 @@
         <title>Simple Vape Calculator</title>
 		<style>
 			html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
+			
+			form  { display: table; margin-left: auto; margin-right: auto;}
+			p     { display: table-row;  padding: 10px;}
+			label { display: table-cell; padding: 10px;}
+			input { display: table-cell; padding: 10px; background-color: #f0f0f0}
+			
+			div.results { 
+					margin-left: auto;
+					margin-right: auto;
+					width: 80%;
+					display: none;
+					}
+			
+			div.disclaimer { 
+					margin-left: auto;
+					margin-right: auto;
+					width: 75%;
+					font-size: 8pt;
+					}
+			
+			body {
+				background-color:#f0f0f0;
+				}
+			
+			div {
+				width: 75%;
+				float: center;
+				padding:20px;
+				margin: 20px;
+				margin-left: auto;
+				margin-right: auto;
+				font-size:18px;
+				background-color:#e3e0cc;
+				text-align: center;
+				}
 		</style>
     </head>
+	
     <body>
 		<div>
-			<p>Welcome to the Simple Vape Calculator by FranklinScudder!</p>
+			<p><h1>Welcome to the Simple Vape Calculator by FranklinScudder!</h1></p>
 		</div>
 		<div>
+			<h2> Regulated, External Battery Mod - "Will this coil kill my battery?" </h2>
 			<form>
-				<input type="text" label="input1">
+				<p>
+					<label for="RegOhms"> Coil Resistance (Ohms): </label>
+					<input type="text" id="RegOhms">
+				</p>
+				<p>
+					<label for="RegCDR"> Battery CDR (Amps) </label>
+					<input type="text" id="RegCDR">
+				</p>
+				<p>
+					<label for="RegWatts"> Power (Watts) </label>
+					<input type="text" id="RegWatts">
+				</p>
+				
 			</form>
+			<div id="RegOut" class="results">
+			</div>
 		</div>
+		
+		<div class="disclaimer">
+			All information provided here is not guaranteed to result in safe operation of any vape product and should be used with caution. Users are encouraged to do 
+			further research and reading before using any vape product and understand that they do so at their own risk. Any damage to property or person caused by a
+			user of this site is entirely their own liability as this site comes with no guarantee of accuracy or safety in the advice or values provided.
+		</div>
+		
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script>
 			$(document).ready(function() {
 				console.log("Document ready!");
 			});
+			
+			$("input").change(function() {
+				console.log("changed");
+				let RegOhms = parseFloat($("#RegOhms").val().replace(/[^\d^\.,]/g, ""));
+				let RegCDR = parseFloat($("#RegCDR").val().replace(/[^\d^\.,]/g, ""));
+				let RegWatts = parseFloat($("#RegWatts").val().replace(/[^\d^\.,]/g, ""));
+				
+				if (RegOhms && RegCDR && RegWatts) {
+					let res = ((RegWatts / RegOhms) ** 0.5).toFixed(2);
+					let resText = "This configuration will draw " + res.toString() + " Amps. ";
+					
+					if (res > RegCDR) {
+						resText += "This is more than the CDR of your battery and therefore should not be used!";
+						}
+					else {
+						resText += "This is less than the CDR of your battery and therefore is likely safe to use.";
+						}
+					$("#RegOut").text(resText);
+					$("#RegOut").show()
+					}
+				else {
+					$("#RegOut").hide()
+					}
+			});
 		</script>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
