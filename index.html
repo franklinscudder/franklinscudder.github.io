@@ -41,25 +41,27 @@
 				text-align: center;
 				}
 		</style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     </head>
 	
     <body>
 		<div>
 			<p><h1>Welcome to the Simple Vape Calculator by FranklinScudder!</h1></p>
+			This page provides a few simple calculators to answer common questions about whether your choice of battery and coil is likely to be safe and appropriate.
 		</div>
 		<div>
-			<h2> Regulated, External Battery Mod - "Will this coil kill my battery?" </h2>
+			<h2> Regulated, External Battery Mod - "Will this power setting kill my battery?" </h2>
 			<form>
 				<p>
-					<label for="RegOhms"> Coil Resistance (Ohms): </label>
-					<input type="text" id="RegOhms">
+					<label for="RegNb"> Number of Batteries (<a href="https://simple.wikipedia.org/wiki/Series_and_parallel_circuits" target="_blank">in series</a>): </label>
+					<input type="text" id="RegNb">
 				</p>
 				<p>
-					<label for="RegCDR"> Battery CDR (Amps) </label>
+					<label for="RegCDR"> Battery <a href="#cdr">CDR</a> (Amps): </label>
 					<input type="text" id="RegCDR">
 				</p>
 				<p>
-					<label for="RegWatts"> Power (Watts) </label>
+					<label for="RegWatts"> Power Setting (Watts): </label>
 					<input type="text" id="RegWatts">
 				</p>
 				
@@ -68,29 +70,18 @@
 			</div>
 		</div>
 		
-		<div class="disclaimer">
-			All information provided here is not guaranteed to result in safe operation of any vape product and should be used with caution. Users are encouraged to do 
-			further research and reading before using any vape product and understand that they do so at their own risk. Any damage to property or person caused by a
-			user of this site is entirely their own liability as this site comes with no guarantee of accuracy or safety in the advice or values provided.
-		</div>
-		
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script>
-			$(document).ready(function() {
-				console.log("Document ready!");
-			});
-			
 			$("input").change(function() {
 				console.log("changed");
-				let RegOhms = parseFloat($("#RegOhms").val().replace(/[^\d^\.,]/g, ""));
-				let RegCDR = parseFloat($("#RegCDR").val().replace(/[^\d^\.,]/g, ""));
-				let RegWatts = parseFloat($("#RegWatts").val().replace(/[^\d^\.,]/g, ""));
+				let Nb = parseFloat($("#RegNb").val().replace(/[^\d^,]/g, ""));
+				let CDR = parseFloat($("#RegCDR").val().replace(/[^\d^\.,]/g, ""));
+				let Watts = parseFloat($("#RegWatts").val().replace(/[^\d^\.,]/g, ""));
 				
-				if (RegOhms && RegCDR && RegWatts) {
-					let res = ((RegWatts / RegOhms) ** 0.5).toFixed(2);
-					let resText = "This configuration will draw " + res.toString() + " Amps. ";
+				if (Nb && CDR && Watts) {
+					let res = (Watts/(Nb * 3.2)).toFixed(2);
+					let resText = "This configuration will draw a maximum of " + res.toString() + " Amps. ";
 					
-					if (res > RegCDR) {
+					if (res > CDR) {
 						resText += "This is more than the CDR of your battery and therefore should not be used!";
 						}
 					else {
@@ -104,6 +95,69 @@
 					}
 			});
 		</script>
+		
+		<div>
+			<h2> Unregulated, External Battery Mod - "Will this coil kill my battery/me?" </h2>
+			<form>
+				<p>
+					<label for="UnregNb"> Number of Batteries (<a href="https://simple.wikipedia.org/wiki/Series_and_parallel_circuits" target="_blank">in series</a>): </label>
+					<input type="text" id="UnregNb">
+				</p>
+				<p>
+					<label for="UnregOhms"> Coil Resistance (Ohms): </label>
+					<input type="text" id="UnregOhms">
+				</p>
+				<p>
+					<label for="UnregCDR"> Battery <a href="#cdr">CDR</a> (Amps): </label>
+					<input type="text" id="UnregCDR">
+				</p>
+				
+			</form>
+			<div id="UnregOut" class="results">
+			</div>
+		</div>
+		
+		<script>
+			$("input").change(function() {
+				let Nb = parseFloat($("#UnregNb").val().replace(/[^\d^,]/g, ""));
+				let Ohms = parseFloat($("#UnregOhms").val().replace(/[^\d^\.,]/g, ""));
+				let CDR = parseFloat($("#UnregCDR").val().replace(/[^\d^\.,]/g, ""));
+				
+				if (Ohms && CDR) {
+					let Watts = (((4.2*Nb)**2)/Ohms).toFixed(2);
+					let Amps = ((4.2*Nb)/Ohms).toFixed(2);
+					let resText = "This configuration will draw a maximum of " + Amps.toString() + " Amps. ";
+					
+					if (Amps > CDR) {
+						resText += "This is more than the CDR of your battery and therefore should not be used! ";
+						}
+					else {
+						resText += "This is less than the CDR of your battery and therefore is likely safe to use. ";
+						}
+						
+					resText += "This configuration will run at a maximum power of around " + Watts.toString() + " Watts. You will want to consider whether this is in the right range for your chosen atomiser."
+					$("#UnregOut").text(resText);
+					$("#UnregOut").show()
+					}
+				else {
+					$("#UnregOut").hide()
+					}
+			});
+		</script>
+		
+		<div id="cdr">
+			<h2> "What is CDR?" </h2>
+			<p> CDR (Continuous Discharge Rating) is the maximum current (Amps) that a battery can safely deliver. Manufacturers will supply a value of CDR for their
+				products but this is sometimes inaccurate. For a reliable value of CDR, it is recommended to consult Mooch's database of battery test results. This can be
+				accessed <a href="https://www.e-cigarette-forum.com/blogs/mooch.256958/" target="_blank">here</a>.
+		</div>
+		
+		<div class="disclaimer">
+			All information provided here is not guaranteed to result in safe operation of any vape product and should be used with caution. Users are encouraged to do 
+			further research and reading before using any vape product and understand that they do so at their own risk. Any damage to property or person caused by a
+			user of this site is entirely their own liability as this site comes with no guarantee of accuracy or safety in the advice or values provided.
+		</div>
+		
     </body>
 </html>
 
