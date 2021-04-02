@@ -11,6 +11,15 @@
 			label { display: table-cell; padding: 10px;}
 			input { display: table-cell; padding: 10px; background-color: #f0f0f0}
 			
+			
+			div.text {
+				text-align: left;
+				padding: 20px;
+				width: 75%
+				}
+			
+			div.text h2 { text-align: center; }
+			
 			div.results { 
 					margin-left: auto;
 					margin-right: auto;
@@ -47,7 +56,13 @@
     <body>
 		<div>
 			<p><h1>Welcome to the Simple Vape Calculator by FranklinScudder!</h1></p>
+			<p>
 			This page provides a few simple calculators to answer common questions about whether your choice of battery and coil is likely to be safe and appropriate.
+			<br>
+			If you're trying to decide which battery to buy for your vape, head over to 
+			<a href="https://www.e-cigarette-forum.com/blogs/mooch.256958/" target="_blank">Mooch's battery blog</a> for advice.
+			
+			
 		</div>
 		<div>
 			<h2> Regulated, External Battery Mod - "Will this power setting kill my battery?" </h2>
@@ -73,9 +88,12 @@
 		<script>
 			$("input").change(function() {
 				console.log("changed");
-				let Nb = parseFloat($("#RegNb").val().replace(/[^\d^,]/g, ""));
+				let Nb = parseInt($("#RegNb").val().replace(/[^\d^\.,]/g, ""));
 				let CDR = parseFloat($("#RegCDR").val().replace(/[^\d^\.,]/g, ""));
 				let Watts = parseFloat($("#RegWatts").val().replace(/[^\d^\.,]/g, ""));
+				if (Nb) {
+					$("#RegNb").val(Nb)
+					}
 				
 				if (Nb && CDR && Watts) {
 					let res = (Watts/(Nb * 3.2)).toFixed(2);
@@ -104,7 +122,7 @@
 					<input type="text" id="UnregNb">
 				</p>
 				<p>
-					<label for="UnregOhms"> Coil Resistance (Ohms): </label>
+					<label for="UnregOhms"> <a href="#coils">Coil Resistance</a> (Ohms): </label>
 					<input type="text" id="UnregOhms">
 				</p>
 				<p>
@@ -119,11 +137,14 @@
 		
 		<script>
 			$("input").change(function() {
-				let Nb = parseFloat($("#UnregNb").val().replace(/[^\d^,]/g, ""));
+				let Nb = parseInt($("#UnregNb").val().replace(/[^\d^\.,]/g, ""));
 				let Ohms = parseFloat($("#UnregOhms").val().replace(/[^\d^\.,]/g, ""));
 				let CDR = parseFloat($("#UnregCDR").val().replace(/[^\d^\.,]/g, ""));
+				if (Nb) {
+					$("#UnregNb").val(Nb)
+					}
 				
-				if (Ohms && CDR) {
+				if (Ohms && CDR && Nb) {
 					let Watts = (((4.2*Nb)**2)/Ohms).toFixed(2);
 					let Amps = ((4.2*Nb)/Ohms).toFixed(2);
 					let resText = "This configuration will draw a maximum of " + Amps.toString() + " Amps. ";
@@ -135,21 +156,47 @@
 						resText += "This is less than the CDR of your battery and therefore is likely safe to use. ";
 						}
 						
-					resText += "This configuration will run at a maximum power of around " + Watts.toString() + " Watts. You will want to consider whether this is in the right range for your chosen atomiser."
+					resText += "This configuration will run at a maximum power of around " + Watts.toString();
+					resText += " Watts. You will want to consider whether this is in the right range for your chosen atomiser.";
 					$("#UnregOut").text(resText);
-					$("#UnregOut").show()
+					$("#UnregOut").show();
 					}
 				else {
-					$("#UnregOut").hide()
+					$("#UnregOut").hide();
 					}
 			});
 		</script>
 		
-		<div id="cdr">
+		<div id="cdr" class="text">
 			<h2> "What is CDR?" </h2>
 			<p> CDR (Continuous Discharge Rating) is the maximum current (Amps) that a battery can safely deliver. Manufacturers will supply a value of CDR for their
 				products but this is sometimes inaccurate. For a reliable value of CDR, it is recommended to consult Mooch's database of battery test results. This can be
 				accessed <a href="https://www.e-cigarette-forum.com/blogs/mooch.256958/" target="_blank">here</a>.
+			</p>
+		</div>
+		
+		<div id="coils" class="text">
+			<h2> "Which resistance value should I use?" </h2>
+			<p> These calculators need the effective installed resistance of your coil(s). This is the resistance that your mod sees when the coil(s) is installed in the atomiser
+			and ready to vape. 
+			</p>
+			<br>
+			<p>
+			To find this resistance, simply install your coil(s) as you intend to use them, then use a mod or multimeter to read the resistance of the built 
+			atomiser. This eliminates any complications in coil variations, multi-coil configurations and extra resistance caused by the atomiser or 510 connector.
+			</p>
+		</div>
+		
+		<div id="regulation" class="text">
+			<h2> "Is my device regulated?" </h2>
+			<p> Can you select a power (wattage) on your device? If you can it is regulated as the mod will control the power coming from your batteries to match the 
+			value you have selected. If you can't, then it is most likely unregulated meaning the power going into the coil is whatever your batteries can provide.
+			</p>
+			<br>
+			<p>
+			Some unregulated mods (mostly 'mechanical' mods) have absolutely ZERO protections built in and therefore should be used with great caution by users who fully
+			understand the theory and practical guidelines that must be followed when using them.
+			</p>
 		</div>
 		
 		<div class="disclaimer">
@@ -157,6 +204,13 @@
 			further research and reading before using any vape product and understand that they do so at their own risk. Any damage to property or person caused by a
 			user of this site is entirely their own liability as this site comes with no guarantee of accuracy or safety in the advice or values provided.
 		</div>
+		
+		
+		<form action="https://www.paypal.com/donate" method="post" target="_top">
+			<input type="hidden" name="hosted_button_id" value="658WUPPW7LDT2" />
+			<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+			<img alt="" border="0" src="https://www.paypal.com/en_GB/i/scr/pixel.gif" width="1" height="1" />
+		</form>
 		
     </body>
 </html>
